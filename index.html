@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risk Simulator | Tradeable vs Lossable</title>
+    <title>Risk Simulator Pro | Dynamic Trading Dashboard</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -43,76 +43,76 @@
         .panel h2 { margin-top: 0; font-size: 1.2rem; color: var(--accent-blue); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
 
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px; font-weight: 600; }
         .input-group input, .input-group select {
             width: 100%; background: #0f172a; border: 1px solid var(--border); border-radius: 6px;
             padding: 10px; color: white; font-size: 1rem; transition: border 0.2s;
         }
         .input-group input:focus { border-color: var(--accent-blue); outline: none; }
 
-        /* Toggle Switch */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
+        /* Toggle Button Styling */
+        .toggle-box {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;
+            margin-bottom: 15px; border: 1px solid var(--border);
         }
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider-toggle {
+        .slider-round {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #475569; transition: .4s; border-radius: 20px;
+            background-color: #475569; transition: .4s; border-radius: 34px;
         }
-        .slider-toggle:before {
-            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+        .slider-round:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
             background-color: white; transition: .4s; border-radius: 50%;
         }
-        input:checked + .slider-toggle { background-color: var(--accent-blue); }
-        input:checked + .slider-toggle:before { transform: translateX(20px); }
+        input:checked + .slider-round { background-color: var(--accent-blue); }
+        input:checked + .slider-round:before { transform: translateX(22px); }
 
-        /* Dashboard */
+        /* Main Dashboard Status Cards */
         .dashboard { display: flex; flex-direction: column; gap: 20px; }
         
         .status-card {
             padding: 30px; border-radius: 12px; text-align: center;
-            transition: all 0.3s ease; border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-width: 2px; border-style: solid;
         }
-        .safe { background: rgba(34, 197, 94, 0.1); border-color: var(--accent-green); }
-        .danger { background: rgba(239, 68, 68, 0.1); border-color: var(--accent-red); }
-        .warning { background: rgba(245, 158, 11, 0.1); border-color: var(--accent-orange); }
+        /* Green - Safe */
+        .status-card.safe { background: rgba(34, 197, 94, 0.15); border-color: var(--accent-green); color: #86efac; }
+        /* Orange - Warning */
+        .status-card.warning { background: rgba(245, 158, 11, 0.15); border-color: var(--accent-orange); color: #fcd34d; }
+        /* Red - Danger */
+        .status-card.danger { background: rgba(239, 68, 68, 0.15); border-color: var(--accent-red); color: #fca5a5; }
 
-        .status-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
-        .status-desc { font-size: 0.95rem; opacity: 0.9; }
+        .status-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
+        .status-desc { font-size: 1rem; font-weight: 500; opacity: 0.9; }
 
+        /* Metrics Boxes */
         .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .metric-box {
             background: var(--card-bg); border: 1px solid var(--border);
-            padding: 20px; border-radius: 12px; position: relative; overflow: hidden;
+            padding: 20px; border-radius: 12px; position: relative;
         }
-        .metric-label { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-        .metric-value { font-size: 1.4rem; font-weight: 600; margin-top: 5px; }
+        .metric-label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .metric-value { font-size: 1.5rem; font-weight: 700; margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
 
-        /* Slider Styles */
-        .slider-container { margin: 20px 0; }
-        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--accent-blue); }
+        /* Dynamic Progress Bar */
+        .gauge-wrap { height: 10px; background: #0f172a; border-radius: 5px; margin-top: 12px; overflow: hidden; border: 1px solid var(--border); }
+        #margin-bar { height: 100%; width: 0%; transition: width 0.5s ease, background-color 0.5s; }
 
-        /* Visual Gauge */
-        .gauge-wrap { height: 8px; background: #334155; border-radius: 4px; margin-top: 10px; overflow: hidden; }
-        #margin-gauge-fill { height: 100%; width: 0%; transition: width 0.3s ease, background-color 0.3s; }
+        /* Price Slider */
+        .slider-section { margin: 25px 0; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--accent-blue); height: 8px; border-radius: 4px; }
 
-        .reason-box {
-            margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 0.9rem;
-            line-height: 1.4; border-left: 4px solid var(--accent-blue); background: #1a2233;
+        .reason-panel {
+            margin-top: 10px; padding: 20px; border-radius: 12px; font-size: 1rem;
+            line-height: 1.6; background: rgba(0,0,0,0.2); border-left: 5px solid var(--accent-blue);
         }
 
         footer {
-            margin-top: 40px; padding: 20px; color: var(--text-dim);
+            margin-top: 40px; padding: 25px; color: var(--text-dim);
             font-size: 0.9rem; text-align: center; width: 100%;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border); letter-spacing: 1px;
         }
 
         @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
@@ -121,46 +121,47 @@
 <body>
 
 <div class="container">
+    <!-- INPUT SIDEBAR -->
     <aside class="panel">
-        <h2>Parameters</h2>
+        <h2>Trade Settings</h2>
         
         <div class="input-group">
             <label>Trade Direction</label>
             <select id="direction">
-                <option value="buy">BUY</option>
-                <option value="sell">SELL</option>
+                <option value="buy">BUY (LONG)</option>
+                <option value="sell">SELL (SHORT)</option>
             </select>
-        </div>
-
-        <div class="input-group">
-            <label>Entry Price</label>
-            <input type="number" id="entryPrice" value="5000" step="0.01">
-        </div>
-
-        <div class="input-group">
-            <label>Predicted Price</label>
-            <input type="number" id="predictedPrice" value="5500" step="0.01">
-        </div>
-
-        <div class="slider-container">
-            <label style="font-size: 0.8rem; color: var(--text-dim);">Live Price Adjust</label>
-            <input type="range" id="priceSlider" min="2500" max="7500" step="1">
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="input-group">
-                <label>Lot Size</label>
-                <input type="number" id="lotSize" value="1.0" step="0.01">
+                <label>Entry Price</label>
+                <input type="number" id="entryPrice" value="5000" step="0.01">
             </div>
             <div class="input-group">
-                <label>Contract Size</label>
-                <input type="number" id="contractSize" value="1000">
+                <label>Target Price</label>
+                <input type="number" id="predictedPrice" value="5500" step="0.01">
             </div>
         </div>
 
-        <div class="input-group">
-            <label>Leverage (1:X)</label>
-            <input type="text" id="leverage" value="1:100">
+        <div class="slider-section">
+            <label style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Live Price Adjustment</label>
+            <input type="range" id="priceSlider" min="2500" max="7500" step="1">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-dim); margin-top: 5px;">
+                <span>Bearish Simulation</span>
+                <span>Bullish Simulation</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group">
+                <label>Lots</label>
+                <input type="number" id="lotSize" value="1.0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Leverage</label>
+                <input type="text" id="leverage" value="1:100">
+            </div>
         </div>
 
         <div class="input-group">
@@ -176,11 +177,11 @@
             </select>
         </div>
 
-        <div id="toggleWrapper" class="toggle-container">
-            <label style="font-size: 0.75rem; color: var(--text-dim); font-weight: bold;">IGNORE BONUS IN EQUITY</label>
+        <div id="toggleContainer" class="toggle-box">
+            <label style="font-size: 0.75rem; color: var(--accent-blue); font-weight: bold;">STRICT EQUITY (IGNORE BONUS)</label>
             <label class="switch">
-                <input type="checkbox" id="strictMode">
-                <span class="slider-toggle"></span>
+                <input type="checkbox" id="strictToggle">
+                <span class="slider-round"></span>
             </label>
         </div>
 
@@ -189,32 +190,39 @@
             <input type="number" id="bonusAmount" value="500">
         </div>
 
-        <div class="input-group">
-            <label>Stop-Out Percentage (%)</label>
-            <input type="number" id="stopOutLevel" value="50">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="input-group">
+                <label>Stop-Out (%)</label>
+                <input type="number" id="stopOutLevel" value="50">
+            </div>
+            <div class="input-group">
+                <label>Contract Size</label>
+                <input type="number" id="contractSize" value="1000">
+            </div>
         </div>
     </aside>
 
+    <!-- DASHBOARD RESULTS -->
     <main class="dashboard">
         <div id="statusCard" class="status-card safe">
             <div id="statusTitle" class="status-title">Trade Active</div>
-            <div id="statusDesc" class="status-desc">Calculating simulation...</div>
+            <div id="statusDesc" class="status-desc">System analysis in progress...</div>
         </div>
 
-        <div id="metricsArea">
+        <div id="mainDisplay">
             <div class="metrics-grid">
-                <div class="metric-box">
-                    <div class="metric-label">Used Margin</div>
-                    <div id="outMargin" class="metric-value">$0.00</div>
-                </div>
                 <div class="metric-box">
                     <div class="metric-label">Projected Equity</div>
                     <div id="outEquity" class="metric-value">$0.00</div>
                 </div>
                 <div class="metric-box">
                     <div class="metric-label">Margin Level</div>
-                    <div id="outMarginLevel" class="metric-value">0%</div>
-                    <div class="gauge-wrap"><div id="margin-gauge-fill"></div></div>
+                    <div id="outMarginLevel" class="metric-value">0.00%</div>
+                    <div class="gauge-wrap"><div id="margin-bar"></div></div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Used Margin</div>
+                    <div id="outMargin" class="metric-value">$0.00</div>
                 </div>
                 <div class="metric-box">
                     <div class="metric-label">Distance to Stop-Out</div>
@@ -222,7 +230,7 @@
                 </div>
             </div>
 
-            <div class="panel">
+            <div class="panel" style="margin-top: 20px;">
                 <div class="metrics-grid">
                     <div>
                         <div class="metric-label">Stop-Out Price</div>
@@ -233,121 +241,125 @@
                         <div id="outPL" class="metric-value">$0.00</div>
                     </div>
                 </div>
-                <div id="reasonText" class="reason-box"></div>
+                <div id="reasonText" class="reason-panel">
+                    Change parameters to view the logic breakdown.
+                </div>
             </div>
         </div>
     </main>
 </div>
 
 <footer>
-    copyright Amaanullah Bhatti - Junior Risk Analyst
+    &copy; Amaanullah Bhatti - Junior Risk Analyst
 </footer>
 
 <script>
-    const inputs = ['entryPrice', 'predictedPrice', 'direction', 'lotSize', 'balance', 'leverage', 'bonusType', 'bonusAmount', 'stopOutLevel', 'contractSize', 'strictMode'];
-    const dom = {};
-    inputs.forEach(id => dom[id] = document.getElementById(id));
+    const ids = ['entryPrice', 'predictedPrice', 'direction', 'lotSize', 'balance', 'leverage', 'bonusType', 'bonusAmount', 'stopOutLevel', 'contractSize', 'strictToggle'];
+    const ui = {};
+    ids.forEach(id => ui[id] = document.getElementById(id));
     const slider = document.getElementById('priceSlider');
 
-    function parseLeverage(val) { return parseFloat(val.toString().replace('1:', '')) || 1; }
+    function parseLeverage(v) { return parseFloat(v.toString().replace('1:', '')) || 1; }
 
     function update() {
-        const entry = parseFloat(dom.entryPrice.value) || 0;
-        const pred = parseFloat(dom.predictedPrice.value) || 0;
-        const dir = dom.direction.value;
-        const lot = parseFloat(dom.lotSize.value) || 0;
-        const contract = parseFloat(dom.contractSize.value) || 0;
-        const balance = parseFloat(dom.balance.value) || 0;
-        const bonus = parseFloat(dom.bonusAmount.value) || 0;
-        const leverage = parseLeverage(dom.leverage.value);
-        const soPercent = parseFloat(dom.stopOutLevel.value) || 0;
-        const type = dom.bonusType.value;
-        const strict = dom.strictMode.checked && type === 'tradeable';
+        const entry = parseFloat(ui.entryPrice.value) || 0;
+        const pred = parseFloat(ui.predictedPrice.value) || 0;
+        const dir = ui.direction.value;
+        const lot = parseFloat(ui.lotSize.value) || 0;
+        const contract = parseFloat(ui.contractSize.value) || 0;
+        const balance = parseFloat(ui.balance.value) || 0;
+        const bonus = parseFloat(ui.bonusAmount.value) || 0;
+        const leverage = parseLeverage(ui.leverage.value);
+        const soPercent = parseFloat(ui.stopOutLevel.value) || 0;
+        const type = ui.bonusType.value;
+        const strict = ui.strictToggle.checked && type === 'tradeable';
 
-        // Toggle UI logic
-        document.getElementById('toggleWrapper').style.opacity = (type === 'tradeable') ? "1" : "0.3";
-        dom.strictMode.disabled = (type !== 'tradeable');
+        // Toggle visibility
+        document.getElementById('toggleContainer').style.opacity = (type === 'tradeable') ? "1" : "0.3";
+        ui.strictToggle.disabled = (type !== 'tradeable');
 
-        // 1. Required Margin Check
-        const margin = (lot * contract * entry) / leverage;
+        // Initial Margin Check
+        const marginReq = (lot * contract * entry) / leverage;
         const totalCapital = balance + bonus;
-        
+
         const statusCard = document.getElementById('statusCard');
-        if (margin > totalCapital) {
+        const statusTitle = document.getElementById('statusTitle');
+        const statusDesc = document.getElementById('statusDesc');
+        const mainDisplay = document.getElementById('mainDisplay');
+
+        if (marginReq > totalCapital) {
             statusCard.className = 'status-card warning';
-            document.getElementById('statusTitle').innerText = "Cannot Enter Position";
-            document.getElementById('statusDesc').innerText = `Margin required ($${margin.toFixed(2)}) exceeds Total Capital ($${totalCapital.toFixed(2)}).`;
-            document.getElementById('metricsArea').style.opacity = "0.2";
+            statusTitle.innerText = "Cannot Enter Trade";
+            statusDesc.innerText = `Insufficient Funds: Margin ($${marginReq.toFixed(2)}) > Balance+Bonus ($${totalCapital.toFixed(2)})`;
+            mainDisplay.style.opacity = "0.2";
             return;
         } else {
-            document.getElementById('metricsArea').style.opacity = "1";
+            mainDisplay.style.opacity = "1";
         }
 
-        // 2. Main Calculations
+        // Price Calculations
         if (document.activeElement !== slider) {
             slider.min = entry * 0.5; slider.max = entry * 1.5; slider.value = pred;
         }
 
-        const floatingPL = (dir === 'buy' ? (pred - entry) : (entry - pred)) * lot * contract;
-        
-        // Equity depends on strict toggle (only for tradeable)
-        const equityAtPred = strict ? (balance + floatingPL) : (balance + bonus + floatingPL);
-        const marginLevel = margin > 0 ? (equityAtPred / margin) * 100 : 0;
+        const currentPL = (dir === 'buy' ? (pred - entry) : (entry - pred)) * lot * contract;
+        const equity = strict ? (balance + currentPL) : (balance + bonus + currentPL);
+        const marginLevel = marginReq > 0 ? (equity / marginReq) * 100 : 0;
 
-        // 3. Stop Out Price Calculation (Structural Issue 1)
+        // Stop Out Logic
         const multiplier = dir === 'buy' ? 1 : -1;
-        
-        // Threshold 1: Margin Level Percentage
-        // (BaseEquity + PL) = Margin * (SO% / 100)
         const currentEquityBase = strict ? balance : (balance + bonus);
-        const targetEquitySO = margin * (soPercent / 100);
+        const targetEquitySO = marginReq * (soPercent / 100);
+        
+        // Threshold 1: Margin % Stop out
         const priceSO = entry + ((targetEquitySO - currentEquityBase) / (lot * contract * multiplier));
 
         // Threshold 2: Floor logic
-        // If Strict Tradeable: stops when balance hits 0
-        // If Normal Tradeable: stops when equity hits bonus
-        // If Lossable: no floor logic (Standard MT4/5)
         let priceFloor = dir === 'buy' ? -Infinity : Infinity;
         if (type === 'tradeable') {
-            const floorLevel = strict ? 0 : bonus;
-            priceFloor = entry + ((floorLevel - currentEquityBase) / (lot * contract * multiplier));
+            const floorVal = strict ? 0 : bonus;
+            priceFloor = entry + ((floorVal - currentEquityBase) / (lot * contract * multiplier));
         }
 
         const stopPrice = dir === 'buy' ? Math.max(priceSO, priceFloor) : Math.min(priceSO, priceFloor);
         const isStopped = dir === 'buy' ? (pred <= stopPrice) : (pred >= stopPrice);
 
-        // 4. UI Updates
-        document.getElementById('outMargin').innerText = `$${margin.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('outEquity').innerText = `$${equityAtPred.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-        document.getElementById('outPL').innerText = `$${floatingPL.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        // UI Color Logic
+        document.getElementById('outMargin').innerText = `$${marginReq.toLocaleString()}`;
+        document.getElementById('outEquity').innerText = `$${equity.toLocaleString()}`;
+        document.getElementById('outPL').innerText = `$${currentPL.toLocaleString()}`;
+        document.getElementById('outPL').style.color = currentPL >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
         document.getElementById('outMarginLevel').innerText = `${marginLevel.toFixed(2)}%`;
         document.getElementById('outStopPrice').innerText = stopPrice.toFixed(2);
         document.getElementById('outDistance').innerText = Math.abs(pred - stopPrice).toFixed(2);
 
-        const gauge = document.getElementById('margin-gauge-fill');
-        gauge.style.width = `${Math.min(marginLevel / 5, 100)}%`;
-        gauge.style.backgroundColor = marginLevel <= soPercent ? 'var(--accent-red)' : 'var(--accent-blue)';
+        // Progress Bar Color Logic
+        const bar = document.getElementById('margin-bar');
+        bar.style.width = `${Math.min(marginLevel / 5, 100)}%`;
+        if (marginLevel > 200) bar.style.backgroundColor = 'var(--accent-green)';
+        else if (marginLevel > soPercent + 20) bar.style.backgroundColor = 'var(--accent-orange)';
+        else bar.style.backgroundColor = 'var(--accent-red)';
 
+        const reason = document.getElementById('reasonText');
         if (isStopped) {
             statusCard.className = 'status-card danger';
-            document.getElementById('statusTitle').innerText = "Trade WILL Hit Stop-Out";
-            document.getElementById('statusDesc').innerText = `Price hits liquidation at ${stopPrice.toFixed(2)}.`;
+            statusTitle.innerText = "Trade WILL hit Stop-Out";
+            statusDesc.innerText = `Prediction price ${pred.toFixed(2)} is beyond liquidation price ${stopPrice.toFixed(2)}.`;
             
-            const hitFloor = (dir === 'buy' && stopPrice === priceFloor) || (dir === 'sell' && stopPrice === priceFloor);
-            document.getElementById('reasonText').innerHTML = hitFloor 
-                ? `<strong>Reason:</strong> ${strict ? 'Zero Balance' : 'Bonus Protection'} floor hit. Broker closed position to prevent credit loss.`
-                : `<strong>Reason:</strong> Margin Level reached the ${soPercent}% liquidation threshold.`;
+            const wasFloor = (dir === 'buy' && stopPrice === priceFloor) || (dir === 'sell' && stopPrice === priceFloor);
+            reason.innerHTML = wasFloor 
+                ? `<strong>Liquidation Reason:</strong> Stop-out occurred because your ${strict ? 'Physical Balance' : 'Equity'} hit the ${strict ? 'Zero' : 'Bonus'} floor protection.`
+                : `<strong>Liquidation Reason:</strong> Your Margin Level reached the broker's ${soPercent}% Stop-Out percentage.`;
         } else {
             statusCard.className = 'status-card safe';
-            document.getElementById('statusTitle').innerText = "Trade survives Prediction";
-            document.getElementById('statusDesc').innerText = `Account remains active at simulated price ${pred.toFixed(2)}.`;
-            document.getElementById('reasonText').innerText = `Equity is sufficient to sustain the ${type} system requirements.`;
+            statusTitle.innerText = "Trade Will Survive";
+            statusDesc.innerText = `Current projection maintains healthy margin levels at ${pred.toFixed(2)}.`;
+            reason.innerText = `Your Equity ($${equity.toFixed(2)}) is safely above the calculated liquidation price. Using ${type} logic ${strict ? '(Strict Mode)' : ''}.`;
         }
-        document.getElementById('outPL').style.color = floatingPL >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
     }
 
-    inputs.forEach(id => dom[id].addEventListener('input', update));
-    slider.addEventListener('input', (e) => { dom.predictedPrice.value = e.target.value; update(); });
+    ids.forEach(id => ui[id].addEventListener('input', update));
+    slider.addEventListener('input', (e) => { ui.predictedPrice.value = e.target.value; update(); });
     update();
 </script>
 </body>
